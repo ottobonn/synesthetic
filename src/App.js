@@ -1,27 +1,51 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
+import React, {Component} from 'react';
 import './App.css';
 
+import {SceneManager} from './SceneManager';
+import {AudioAnalyser} from './AudioAnalyser';
+
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.canvasRef = React.createRef();
+    this.state = {
+      width: 1,
+      height: 1,
+    }
+  }
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
+      <canvas id="main" ref={this.canvasRef}></canvas>
     );
+  }
+  updateDimensions() {
+    this.setState({width: window.innerWidth, height: window.innerHeight});
+  }
+  componentDidMount(){
+    this.updateDimensions();
+    window.addEventListener("resize", this.updateDimensions.bind(this));
+
+    const analyser = new AudioAnalyser();
+
+    const sceneManager = new SceneManager({
+      canvas:this.canvasRef.current,
+    });
+
+    const animate = () => {
+      this.animationFrameRequest = requestAnimationFrame(animate);
+      sceneManager.animate({
+        spectrum: analyser.getSpectrum(),
+        width: this.state.width,
+        height: this.state.height,
+      });
+    }
+    animate();
+  }
+  componentWillUnmount() {
+    if (this.animationFrameRequest) {
+      cancelAnimationFrame(this.animationFrameRequest);
+    }
+    window.removeEventListener("resize", this.updateDimensions.bind(this));
   }
 }
 
