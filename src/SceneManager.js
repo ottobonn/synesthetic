@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import {Visualizer} from './Visualizer';
+// import {BoxVisualizer} from './visualizers/BoxVisualizer';
+import {PieVisualizer} from './visualizers/PieVisualizer';
 
 class SceneManager {
   constructor({canvas}) {
@@ -14,7 +15,7 @@ class SceneManager {
     this.renderer = renderer;
     camera.position.z = 5;
 
-    this.visualizers = [new Visualizer({scene})];
+    this.visualizers = [new PieVisualizer({scene})];
   }
   animate({width, height, spectrum}) {
     if (width !== this.lastWidth || height !== this.lastHeight) {
@@ -24,8 +25,11 @@ class SceneManager {
       this.lastWidth = width;
       this.lastHeight = height;
     }
-
-    this.visualizers.forEach(visualizer => visualizer.animate({spectrum}));
+    this.visualizers.forEach(visualizer => visualizer.animate({
+      width,
+      height,
+      spectrum,
+    }));
     this.renderer.render(this.scene, this.camera);
   }
 }

@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-class Visualizer {
+class BoxVisualizer {
   constructor({scene}) {
     const xCount = 5;
     const yCount = 4;
@@ -53,4 +53,4 @@ class Visualizer {
   }
 }
 
-export {Visualizer};
+export {BoxVisualizer};
