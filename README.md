@@ -1,6 +1,6 @@
 # synesthetic.computer
 
-A web-based music visualizer. Check it out at <a href="http://synesthetic.computer">synesthetic.computer</a>.
+A web-based music visualizer. Check it out at <a href="https://synesthetic.computer">synesthetic.computer</a>.
 
 ## Developing
 
