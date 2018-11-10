@@ -11,7 +11,7 @@ class PieVisualizer {
 
       const startOffset = -Math.PI / 2;
       const angularBounds = 2 * Math.PI / numSlices;
-      const angularMargin = 0.01;
+      const angularMargin = 0.001;
       const angularWidth = angularBounds - 2 * angularMargin;
 
       const sliceStart = startOffset + angularBounds * i + angularMargin;
@@ -22,13 +22,13 @@ class PieVisualizer {
       sliceShape.lineTo(0, 0);
 
       const geometry = new THREE.ExtrudeGeometry(sliceShape, {
-        depth: 1,
+        depth: 0.2,
         steps : 1,
         bevelEnabled: false,
-        curveSegments: 24,
+        curveSegments: 50,
       });
 
-      const material = new THREE.MeshBasicMaterial({color: 0x00eeff});
+      const material = new THREE.MeshBasicMaterial({color: 0xffffff});
 
       const mesh = new THREE.Mesh(geometry, material);
       scene.add(mesh);
