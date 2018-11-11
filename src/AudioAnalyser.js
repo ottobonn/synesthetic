@@ -9,7 +9,7 @@ class AudioAnalyser {
     const context = new AudioContext();
     const source = context.createMediaStreamSource(stream);
     const analyser = context.createAnalyser();
-    analyser.fftSize = 512;
+    analyser.fftSize = 256;
     source.connect(analyser);
     return analyser;
   }
