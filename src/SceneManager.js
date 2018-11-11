@@ -3,6 +3,16 @@ import {EffectComposer, EffectPass, BlurPass, RenderPass, KernelSize, BloomEffec
 // import {BoxVisualizer} from './visualizers/BoxVisualizer';
 import {PieVisualizer} from './visualizers/PieVisualizer';
 
+class EffectModulator {
+  constructor({effect, modulator}) {
+    this.effect = effect;
+    this.modulator = modulator || (() => {});
+  }
+  animate(params) {
+    this.modulator(this.effect, params);
+  }
+}
+
 class SceneManager {
   constructor({canvas}) {
     const scene = new THREE.Scene();
@@ -14,22 +24,34 @@ class SceneManager {
       antialias: true,
     });
 
-    const effects = [
-      new BloomEffect(),
-      new ChromaticAberrationEffect({
-        offset: new THREE.Vector2(0.004, 0.004),
+    this.effectModulators = [
+      new EffectModulator({
+        effect: new BloomEffect(),
       }),
-      new ScanlineEffect(),
+      new EffectModulator({
+        effect: new ChromaticAberrationEffect(),
+        modulator(effect, {rms}) {
+          const minOffset = new THREE.Vector2(0, 0);
+          const maxOffset = new THREE.Vector2(0.05, 0.05);
+          const offset = minOffset.lerp(maxOffset, rms);
+          effect.offset = offset;
+        },
+      }),
+      new EffectModulator({
+        effect: new ScanlineEffect(),
+      }),
     ];
+
+    const effects = this.effectModulators.map(modulator => modulator.effect);
 
     const composer = new EffectComposer(renderer);
 
     const passes = [
       new RenderPass(scene, camera),
-      new BlurPass({
-        kernelSize: KernelSize.SMALL,
-      }),
       new EffectPass(camera, ...effects),
+      new BlurPass({
+        kernelSize: KernelSize.VERY_SMALL,
+      }),
     ];
 
     passes[passes.length - 1].renderToScreen = true;
@@ -45,7 +67,8 @@ class SceneManager {
 
     this.visualizers = [new PieVisualizer({scene})];
   }
-  animate({width, height, spectrum}) {
+  animate(params) {
+    const {width, height} = params;
     if (width !== this.lastWidth || height !== this.lastHeight) {
       this.composer.setSize(width, height);
       this.renderer.setSize(width, height);
@@ -54,11 +77,8 @@ class SceneManager {
       this.lastWidth = width;
       this.lastHeight = height;
     }
-    this.visualizers.forEach(visualizer => visualizer.animate({
-      width,
-      height,
-      spectrum,
-    }));
+    this.visualizers.forEach(visualizer => visualizer.animate(params));
+    this.effectModulators.forEach(effectModulator => effectModulator.animate(params));
     this.composer.render(this.scene, this.camera);
   }
 }

@@ -17,9 +17,8 @@ class PieVisualizer {
       const sliceStart = startOffset + angularBounds * i + angularMargin;
       const sliceEnd = sliceStart + angularWidth;
 
-      sliceShape.moveTo(0, 0);
+      sliceShape.absarc(0, 0, 0.5, sliceEnd,sliceStart, true);
       sliceShape.absarc(0, 0, 1, sliceStart, sliceEnd, false);
-      sliceShape.lineTo(0, 0);
 
       const geometry = new THREE.ExtrudeGeometry(sliceShape, {
         depth: 0.2,
@@ -45,7 +44,7 @@ class PieVisualizer {
     const numSlices = this.slices.length;
     const sliceBandwidth = Math.floor(spectrum.length / numSlices);
     this.slices.forEach((slice, index) => {
-      const binAmplitude = Math.max(Math.log(10 * spectrum[index * sliceBandwidth]), 0.01);
+      const binAmplitude = Math.max(Math.log(10 * spectrum[index * sliceBandwidth]), 0.001);
       slice.scale.x = binAmplitude;
       slice.scale.y = binAmplitude;
     });

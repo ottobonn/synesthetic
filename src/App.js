@@ -33,8 +33,12 @@ class App extends Component {
 
     const animate = () => {
       this.animationFrameRequest = requestAnimationFrame(animate);
+      const {spectrum} = analyser.getSpectrum();
+      const {wave, rms} = analyser.getWave();
       sceneManager.animate({
-        spectrum: analyser.getSpectrum(),
+        spectrum,
+        wave,
+        rms,
         width: this.state.width,
         height: this.state.height,
       });
