@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import {EffectComposer, EffectPass, BlurPass, RenderPass, KernelSize, BloomEffect, ScanlineEffect, ChromaticAberrationEffect} from 'postprocessing';
 // import {BoxVisualizer} from './visualizers/BoxVisualizer';
 import {PieVisualizer} from './visualizers/PieVisualizer';
+import {ParticleSystem} from './visualizers/ParticleSystem';
 
 class EffectModulator {
   constructor({effect, modulator}) {
@@ -65,7 +66,10 @@ class SceneManager {
     this.renderer = renderer;
     camera.position.z = 5;
 
-    this.visualizers = [new PieVisualizer({scene})];
+    this.visualizers = [
+      new PieVisualizer({scene}),
+      new ParticleSystem({scene}),
+    ];
   }
   animate(params) {
     const {width, height} = params;
