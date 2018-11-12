@@ -1,6 +1,15 @@
 class AudioAnalyser {
   constructor() {
-    this.getAudioAnalyser().then(analyser => this.analyser = analyser);
+    this.emptyArray = [];
+    this.getAudioAnalyser().then(analyser => {
+      this.analyser = analyser;
+
+      this.rawSpectrum = new Uint8Array(this.analyser.frequencyBinCount);
+      this.spectrum = new Array(this.rawSpectrum.length);
+
+      this.rawWave = new Uint8Array(this.analyser.frequencyBinCount);
+      this.wave = new Array(this.rawWave.length);
+    });
   }
   async getAudioAnalyser() {
     const stream = await navigator.mediaDevices.getUserMedia({
@@ -14,29 +23,40 @@ class AudioAnalyser {
     return analyser;
   }
   getSpectrum() {
-    let rawSpectrum = [];
+    let spectrum;
     if (this.analyser) {
-      rawSpectrum = new Uint8Array(this.analyser.frequencyBinCount);
-      this.analyser.getByteFrequencyData(rawSpectrum);
+      this.analyser.getByteFrequencyData(this.rawSpectrum);
+      this.rawSpectrum.forEach((value, index) => this.spectrum[index] = value / 255);
+      spectrum = this.spectrum;
+    } else {
+      spectrum = this.emptyArray;
     }
-    const spectrum = new Array(rawSpectrum.length);
-    rawSpectrum.forEach((value, index) => spectrum[index] = value / 255);
-    return {spectrum};
+    return {
+      spectrum,
+    };
   }
   getWave() {
-    let rawWave = [];
+    let wave, rms;
     if (this.analyser) {
-      rawWave = new Uint8Array(this.analyser.frequencyBinCount);
-      this.analyser.getByteTimeDomainData(rawWave);
+      this.analyser.getByteTimeDomainData(this.rawWave);
+      const n = this.rawWave.length;
+      let squareSum = 0;
+      for (let i = 0; i < n; i++) {
+        const sample = this.rawWave[i];
+        const normalized = sample / 255;
+        this.wave[i] = normalized;
+        squareSum += (normalized - .5)**2;
+      }
+      wave = this.wave;
+      rms = Math.sqrt(squareSum / n);
+    } else {
+      wave = this.emptyArray;
+      rms = 0;
     }
-    const wave = new Array(rawWave.length);
-    rawWave.forEach((value, index) => wave[index] = value / 255);
-
-    const n = wave.length;
-    const squareSum = wave.reduce((total, sample) => total + (sample - .5)**2, 0);
-    const rms = n ? Math.sqrt(squareSum / n) : 0;
-
-    return {wave, rms};
+    return {
+      wave,
+      rms,
+    };
   }
 }
 
