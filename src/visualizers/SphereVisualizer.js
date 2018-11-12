@@ -29,10 +29,8 @@ class SphereVisualizer {
       curve.animate({spectrum});
       // Move curve along treadmill
       let {x, y, z} = curve.getSceneObject().position;
-      curve.getSceneObject().position.set(x, y, z + clockDelta * this.treadmillSpeed);
-      if (z > this.radius) {
-        curve.getSceneObject().position.set(x, y, -this.radius);
-      }
+      const newZ = (this.radius + z + clockDelta * this.treadmillSpeed) % (2 * this.radius) - this.radius;
+      curve.getSceneObject().position.set(x, y, newZ);
 
       ({x, y, z} = curve.getSceneObject().position);
       const scale = Math.max(2 * this.radius * Math.sqrt(this.radius**2 - z**2), 0.01);
