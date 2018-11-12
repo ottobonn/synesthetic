@@ -28,7 +28,7 @@ class App extends Component {
     const analyser = new AudioAnalyser();
 
     const sceneManager = new SceneManager({
-      canvas:this.canvasRef.current,
+      canvas: this.canvasRef.current,
     });
 
     const animate = () => {

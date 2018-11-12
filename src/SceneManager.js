@@ -3,6 +3,7 @@ import {EffectComposer, EffectPass, BlurPass, RenderPass, KernelSize, BloomEffec
 // import {BoxVisualizer} from './visualizers/BoxVisualizer';
 import {PieVisualizer} from './visualizers/PieVisualizer';
 import {ParticleSystem} from './visualizers/ParticleSystem';
+import {TunnelVisualizer} from './visualizers/TunnelVisualizer';
 
 class EffectModulator {
   constructor({effect, modulator}) {
@@ -69,6 +70,7 @@ class SceneManager {
     this.visualizers = [
       new PieVisualizer({scene}),
       new ParticleSystem({scene}),
+      new TunnelVisualizer({scene}),
     ];
   }
   animate(params) {
@@ -81,6 +83,8 @@ class SceneManager {
       this.lastWidth = width;
       this.lastHeight = height;
     }
+    // TODO adding to params seems to mix concerns; who should own the clock?
+    params.clock = this.clock;
     this.visualizers.forEach(visualizer => visualizer.animate(params));
     this.effectModulators.forEach(effectModulator => effectModulator.animate(params));
     this.composer.render(this.scene, this.camera);
