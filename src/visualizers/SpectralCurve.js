@@ -29,7 +29,7 @@ class SpectralCurve {
     for (let i = 0; i < this.curve.points.length; i++) {
       const binAmplitude = spectrum[i * pointBandwidth];
       const point = this.curve.points[i];
-      const newPoint = point.direction.clone().multiplyScalar(binAmplitude);
+      const newPoint = point.direction.clone().multiplyScalar(THREE.Math.mapLinear(binAmplitude, 0, 1, 0, 2));
       point.set(newPoint.x, newPoint.y, newPoint.z);
     }
     this.curveObject.geometry.setFromPoints(this.curve.getPoints(this.numCurvePoints));

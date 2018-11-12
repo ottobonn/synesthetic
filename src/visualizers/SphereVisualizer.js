@@ -5,7 +5,7 @@ import {SpectralCurve} from './SpectralCurve';
 class SphereVisualizer {
   constructor({scene}) {
     this.numCurves = 10;
-    this.radius = 1;
+    this.radius = 1.2;
     this.treadmillSpeed = 0.1;
 
     this.curves = [];
@@ -33,7 +33,7 @@ class SphereVisualizer {
       curve.getSceneObject().position.set(x, y, newZ);
 
       ({x, y, z} = curve.getSceneObject().position);
-      const scale = Math.max(2 * this.radius * Math.sqrt(this.radius**2 - z**2), 0.01);
+      const scale = Math.max(Math.sqrt(this.radius**2 - z**2) / this.radius, 0.01);
       curve.getSceneObject().scale.set(scale, scale, 1);
     });
 
